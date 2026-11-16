@@ -33,8 +33,7 @@ public class SelectableBook : MonoBehaviour
 
     private void Update()
     {
-        // Solo aplica animación de hover si estamos en la vista de la estantería
-        if (LevelSelectManager.Instance != null && !LevelSelectManager.Instance.IsInspectingBook)
+        if (LevelSelectManager.Instance != null && LevelSelectManager.Instance.CanSelectBooks)
         {
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * smoothSpeed);
         }
@@ -42,7 +41,7 @@ public class SelectableBook : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (LevelSelectManager.Instance != null && LevelSelectManager.Instance.IsInspectingBook) return;
+        if (LevelSelectManager.Instance == null || !LevelSelectManager.Instance.CanSelectBooks) return;
 
         isHovered = true;
         targetPosition = trueHomePosition + hoverOffset;
@@ -51,7 +50,7 @@ public class SelectableBook : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (LevelSelectManager.Instance != null && LevelSelectManager.Instance.IsInspectingBook) return;
+        if (LevelSelectManager.Instance == null || !LevelSelectManager.Instance.CanSelectBooks) return;
 
         isHovered = false;
         targetPosition = trueHomePosition;
@@ -60,7 +59,7 @@ public class SelectableBook : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (isHovered && LevelSelectManager.Instance != null && !LevelSelectManager.Instance.IsInspectingBook)
+        if (isHovered && LevelSelectManager.Instance != null && LevelSelectManager.Instance.CanSelectBooks)
         {
             LevelSelectManager.Instance.InspectBook(this);
         }

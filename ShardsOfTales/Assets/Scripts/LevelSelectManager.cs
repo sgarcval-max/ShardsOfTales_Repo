@@ -6,27 +6,46 @@ public class LevelSelectManager : MonoBehaviour
 {
     public static LevelSelectManager Instance;
 
-    [Header("Puntos de Cámara")]
+    public enum HubState
+    {
+        Exploring,   // Caminando libremente por la biblioteca 3D
+        ShelfView,   // Mirando la estantería de cerca para elegir libro
+        BookView     // Mirando el libro abierto en el atril
+    }
+
+    public HubState CurrentState { get; private set; } = HubState.Exploring;
+
+    [Header("Seguimiento del Jugador (Modo Exploración)")]
+    [SerializeField] private PlayerController3D playerController;
+    [SerializeField] private Vector3 cameraFollowOffset = new Vector3(0f, 5.5f, -6.5f);
+    [SerializeField] private Vector3 cameraFollowRotation = new Vector3(32f, 0f, 0f);
+    [SerializeField] private float followSmoothSpeed = 6f;
+
+    [Header("Puntos de Cámara (Estantería y Atril)")]
     [SerializeField] private Transform shelfCameraPoint;
     [SerializeField] private Transform lecternCameraPoint;
     [SerializeField] private float transitionSpeed = 2.5f;
 
     [Header("Punto de Destino del Libro Cerrado")]
-    [SerializeField] private Transform lecternBookTarget; // Posición justo sobre la mesa antes de abrirse
+    [SerializeField] private Transform lecternBookTarget;
 
     [Header("Interfaz UI")]
-    [SerializeField] private GameObject backToShelfButton;
+    [SerializeField] private GameObject exitShelfButton;   // Botón para volver a caminar por el Hub
+    [SerializeField] private GameObject backToShelfButton; // Botón para volver del atril a la estantería
 
     [Header("Elementos del Atril")]
     [SerializeField] private GameObject openBookObject;
     [SerializeField] private Animator openBookAnimator;
 
-    public bool IsInspectingBook { get; private set; } = false;
+    // Propiedad para que los libros sepan si pueden reaccionar al ratón
+    public bool CanSelectBooks => CurrentState == HubState.ShelfView;
+    public bool IsInspectingBook => CurrentState == HubState.BookView;
 
     private SelectableBook currentSelectedBook;
     private Vector3 selectedBookOriginalPos;
     private Quaternion selectedBookOriginalRot;
     private Transform mainCamTransform;
+    private bool isTransitioning = false;
 
     private void Awake()
     {
@@ -39,31 +58,123 @@ public class LevelSelectManager : MonoBehaviour
         mainCamTransform = Camera.main.transform;
 
         if (openBookObject != null) openBookObject.SetActive(false);
-        if (backToShelfButton != null) backToShelfButton.SetActive(false); // Botón oculto al inicio
+        if (exitShelfButton != null) exitShelfButton.SetActive(false);
+        if (backToShelfButton != null) backToShelfButton.SetActive(false);
+
+        CurrentState = HubState.Exploring;
+        if (playerController != null) playerController.CanMove = true;
     }
 
+    private void LateUpdate()
+    {
+        // Mientras exploramos la biblioteca, la cámara sigue suavemente al jugador 3D
+        if (CurrentState == HubState.Exploring && !isTransitioning && playerController != null)
+        {
+            Vector3 desiredPosition = playerController.transform.position + cameraFollowOffset;
+            mainCamTransform.position = Vector3.Lerp(mainCamTransform.position, desiredPosition, Time.deltaTime * followSmoothSpeed);
+
+            Quaternion desiredRotation = Quaternion.Euler(cameraFollowRotation);
+            mainCamTransform.rotation = Quaternion.Slerp(mainCamTransform.rotation, desiredRotation, Time.deltaTime * followSmoothSpeed);
+        }
+    }
+
+    // 1. Llamado al hacer clic en la estantería mientras caminas
+    public void EnterShelfView()
+    {
+        if (CurrentState != HubState.Exploring || isTransitioning) return;
+
+        if (playerController != null) playerController.CanMove = false;
+        StartCoroutine(TransitionExploreToShelf());
+    }
+
+    // 2. Llamado al pulsar el botón "Salir de Estantería"
+    public void ExitShelfView()
+    {
+        if (CurrentState != HubState.ShelfView || isTransitioning) return;
+
+        if (exitShelfButton != null) exitShelfButton.SetActive(false);
+        StartCoroutine(TransitionShelfToExplore());
+    }
+
+    // 3. Llamado al hacer clic en un libro de la estantería
     public void InspectBook(SelectableBook book)
     {
-        currentSelectedBook = book;
-        IsInspectingBook = true;
+        if (CurrentState != HubState.ShelfView || isTransitioning) return;
 
-        // Guardamos la posición limpia del hueco (TrueHomePosition), no la posición desplazada por el ratón
+        currentSelectedBook = book;
+        CurrentState = HubState.BookView;
+
         selectedBookOriginalPos = book.TrueHomePosition;
         selectedBookOriginalRot = book.transform.rotation;
 
+        if (exitShelfButton != null) exitShelfButton.SetActive(false);
         if (backToShelfButton != null) backToShelfButton.SetActive(false);
 
         StartCoroutine(TransitionToLecternSequence());
     }
 
+    // 4. Llamado al pulsar el botón "<- Volver a Estantería" desde el atril
     public void ReturnToShelf()
     {
+        if (CurrentState != HubState.BookView || isTransitioning) return;
+
         if (backToShelfButton != null) backToShelfButton.SetActive(false);
         StartCoroutine(TransitionToShelfSequence());
     }
 
+    private IEnumerator TransitionExploreToShelf()
+    {
+        isTransitioning = true;
+        float t = 0f;
+        Vector3 startPos = mainCamTransform.position;
+        Quaternion startRot = mainCamTransform.rotation;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            mainCamTransform.position = Vector3.Lerp(startPos, shelfCameraPoint.position, t);
+            mainCamTransform.rotation = Quaternion.Slerp(startRot, shelfCameraPoint.rotation, t);
+            yield return null;
+        }
+
+        mainCamTransform.position = shelfCameraPoint.position;
+        mainCamTransform.rotation = shelfCameraPoint.rotation;
+
+        CurrentState = HubState.ShelfView;
+        isTransitioning = false;
+
+        if (exitShelfButton != null) exitShelfButton.SetActive(true);
+    }
+
+    private IEnumerator TransitionShelfToExplore()
+    {
+        isTransitioning = true;
+        float t = 0f;
+        Vector3 startPos = mainCamTransform.position;
+        Quaternion startRot = mainCamTransform.rotation;
+
+        Vector3 targetPos = playerController != null
+            ? playerController.transform.position + cameraFollowOffset
+            : startPos;
+        Quaternion targetRot = Quaternion.Euler(cameraFollowRotation);
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * transitionSpeed;
+            mainCamTransform.position = Vector3.Lerp(startPos, targetPos, t);
+            mainCamTransform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            yield return null;
+        }
+
+        CurrentState = HubState.Exploring;
+        isTransitioning = false;
+
+        if (playerController != null) playerController.CanMove = true;
+    }
+
     private IEnumerator TransitionToLecternSequence()
     {
+        isTransitioning = true;
         float t = 0f;
         Vector3 camStartPos = mainCamTransform.position;
         Quaternion camStartRot = mainCamTransform.rotation;
@@ -71,16 +182,13 @@ public class LevelSelectManager : MonoBehaviour
         Vector3 bookStartPos = currentSelectedBook.transform.position;
         Quaternion bookStartRot = currentSelectedBook.transform.rotation;
 
-        // 1. Desplazamiento simultáneo de la cámara y del libro volando hacia la mesa
         while (t < 1f)
         {
             t += Time.deltaTime * transitionSpeed;
 
-            // Transición Cámara
             mainCamTransform.position = Vector3.Lerp(camStartPos, lecternCameraPoint.position, t);
             mainCamTransform.rotation = Quaternion.Slerp(camStartRot, lecternCameraPoint.rotation, t);
 
-            // Transición Libro (Vuelo + Rotación horizontal hacia el atril)
             if (currentSelectedBook != null && lecternBookTarget != null)
             {
                 currentSelectedBook.transform.position = Vector3.Lerp(bookStartPos, lecternBookTarget.position, t);
@@ -93,7 +201,6 @@ public class LevelSelectManager : MonoBehaviour
         mainCamTransform.position = lecternCameraPoint.position;
         mainCamTransform.rotation = lecternCameraPoint.rotation;
 
-        // 2. Intercambio: Ocultar el libro cerrado y activar la versión desplegada/abierta
         if (currentSelectedBook != null) currentSelectedBook.gameObject.SetActive(false);
 
         if (openBookObject != null)
@@ -105,13 +212,14 @@ public class LevelSelectManager : MonoBehaviour
             }
         }
 
-        // 3. Activar el botón de volver solo cuando el libro está en la mesa
+        isTransitioning = false;
         if (backToShelfButton != null) backToShelfButton.SetActive(true);
     }
 
     private IEnumerator TransitionToShelfSequence()
     {
-        // 1. Transición de cierre en el atril
+        isTransitioning = true;
+
         if (openBookAnimator != null)
         {
             openBookAnimator.SetTrigger("CloseBook");
@@ -121,7 +229,6 @@ public class LevelSelectManager : MonoBehaviour
 
         if (openBookObject != null) openBookObject.SetActive(false);
 
-        // Reactivar modelo de libro cerrado sobre la mesa para el viaje de vuelta
         if (currentSelectedBook != null)
         {
             currentSelectedBook.gameObject.SetActive(true);
@@ -129,7 +236,6 @@ public class LevelSelectManager : MonoBehaviour
             currentSelectedBook.transform.rotation = lecternBookTarget.rotation;
         }
 
-        // 2. Transición inversa: Cámara regresa a la estantería y el libro vuelve a su hueco
         float t = 0f;
         Vector3 camStartPos = mainCamTransform.position;
         Quaternion camStartRot = mainCamTransform.rotation;
@@ -153,7 +259,6 @@ public class LevelSelectManager : MonoBehaviour
             yield return null;
         }
 
-        // Restaurar posición y estado original del libro
         if (currentSelectedBook != null)
         {
             currentSelectedBook.transform.position = selectedBookOriginalPos;
@@ -161,7 +266,10 @@ public class LevelSelectManager : MonoBehaviour
             currentSelectedBook.ResetBookState();
         }
 
-        IsInspectingBook = false;
+        CurrentState = HubState.ShelfView;
+        isTransitioning = false;
+
+        if (exitShelfButton != null) exitShelfButton.SetActive(true);
     }
 
     public void EnterCurrentLevel()
