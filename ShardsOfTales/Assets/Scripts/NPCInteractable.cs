@@ -10,18 +10,17 @@ public class NPCInteractable : MonoBehaviour, IInteractable
     [Header("Diálogo Inicial")]
     [TextArea(2, 4)]
     [SerializeField] private string[] initialDialogue;
+    public UnityEvent onDialogueFinished;
 
-    [Header("Diálogo Alternativo (Opcional)")]
+    [Header("Diálogo Secundario (Ej. Al volver con un objeto)")]
     [TextArea(2, 4)]
     [SerializeField] private string[] secondaryDialogue;
+    public UnityEvent onSecondaryDialogueFinished;
     private bool useSecondaryDialogue = false;
 
     [Header("Animación al Hablar (Ej. Gesto 6-7)")]
     [SerializeField] private Animator npcAnimator;
     [SerializeField] private string talkAnimTrigger;
-
-    [Header("Evento al Terminar de Hablar")]
-    public UnityEvent onDialogueFinished;
 
     private Transform playerTransform;
 
@@ -45,19 +44,24 @@ public class NPCInteractable : MonoBehaviour, IInteractable
             }
         }
 
-        // Dispara animación si tiene (ideal para el niño haciendo el 6-7 con las manos)
         if (npcAnimator != null && !string.IsNullOrEmpty(talkAnimTrigger))
         {
             npcAnimator.SetTrigger(talkAnimTrigger);
         }
 
-        string[] linesToShow = (useSecondaryDialogue && secondaryDialogue.Length > 0)
-            ? secondaryDialogue
-            : initialDialogue;
+        bool playingSecondary = useSecondaryDialogue && secondaryDialogue != null && secondaryDialogue.Length > 0;
+        string[] linesToShow = playingSecondary ? secondaryDialogue : initialDialogue;
 
         DialogueManager.Instance.StartDialogue(npcName, linesToShow, () =>
         {
-            onDialogueFinished?.Invoke();
+            if (playingSecondary)
+            {
+                onSecondaryDialogueFinished?.Invoke();
+            }
+            else
+            {
+                onDialogueFinished?.Invoke();
+            }
         });
     }
 
