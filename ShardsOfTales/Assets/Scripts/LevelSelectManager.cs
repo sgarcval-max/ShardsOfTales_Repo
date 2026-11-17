@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LevelSelectManager : MonoBehaviour
 {
@@ -8,12 +9,24 @@ public class LevelSelectManager : MonoBehaviour
 
     public enum HubState
     {
+        MainMenu,    // Menú principal en el centro mientras la cámara recorre el Hub
         Exploring,   // Caminando libremente por la biblioteca 3D
         ShelfView,   // Mirando la estantería de cerca para elegir libro
         BookView     // Mirando el libro abierto en el atril
     }
 
-    public HubState CurrentState { get; private set; } = HubState.Exploring;
+    public HubState CurrentState { get; private set; } = HubState.MainMenu;
+
+    [Header("Fundido de Entrada y Menú Principal")]
+    [SerializeField] private Image blackFadeOverlay;
+    [SerializeField] private float entryFadeDuration = 1.2f;
+    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private GameObject optionsPanel;
+
+    [Header("Cámara Cinemática del Menú")]
+    [SerializeField] private Transform menuCamPointA;
+    [SerializeField] private Transform menuCamPointB;
+    [SerializeField] private float menuPanSpeed = 0.08f;
 
     [Header("Seguimiento del Jugador (Modo Exploración)")]
     [SerializeField] private PlayerController3D playerController;
@@ -29,15 +42,15 @@ public class LevelSelectManager : MonoBehaviour
     [Header("Punto de Destino del Libro Cerrado")]
     [SerializeField] private Transform lecternBookTarget;
 
-    [Header("Interfaz UI")]
-    [SerializeField] private GameObject exitShelfButton;   // Botón para volver a caminar por el Hub
-    [SerializeField] private GameObject backToShelfButton; // Botón para volver del atril a la estantería
+    [Header("Interfaz UI del Hub")]
+    [SerializeField] private GameObject returnToMenuButton; // Botón Volver (abajo a la derecha) al explorar
+    [SerializeField] private GameObject exitShelfButton;    // Botón para volver a caminar por el Hub
+    [SerializeField] private GameObject backToShelfButton;  // Botón para volver del atril a la estantería
 
     [Header("Elementos del Atril")]
     [SerializeField] private GameObject openBookObject;
     [SerializeField] private Animator openBookAnimator;
 
-    // Propiedad para que los libros sepan si pueden reaccionar al ratón
     public bool CanSelectBooks => CurrentState == HubState.ShelfView;
     public bool IsInspectingBook => CurrentState == HubState.BookView;
 
@@ -46,6 +59,7 @@ public class LevelSelectManager : MonoBehaviour
     private Quaternion selectedBookOriginalRot;
     private Transform mainCamTransform;
     private bool isTransitioning = false;
+    private float menuPanTimer = 0f;
 
     private void Awake()
     {
@@ -57,18 +71,67 @@ public class LevelSelectManager : MonoBehaviour
     {
         mainCamTransform = Camera.main.transform;
 
+        if (playerController == null)
+        {
+            playerController = FindObjectOfType<PlayerController3D>();
+        }
+
+        // Empezamos en modo Menú Principal
+        CurrentState = HubState.MainMenu;
+        if (playerController != null) playerController.CanMove = false;
+
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
         if (openBookObject != null) openBookObject.SetActive(false);
+        if (returnToMenuButton != null) returnToMenuButton.SetActive(false);
         if (exitShelfButton != null) exitShelfButton.SetActive(false);
         if (backToShelfButton != null) backToShelfButton.SetActive(false);
 
-        CurrentState = HubState.Exploring;
-        if (playerController != null) playerController.CanMove = true;
+        if (menuCamPointA != null)
+        {
+            mainCamTransform.position = menuCamPointA.position;
+            mainCamTransform.rotation = menuCamPointA.rotation;
+        }
+
+        // Hacemos Fade Out del fondo negro al entrar desde SCN_Intro
+        if (blackFadeOverlay != null)
+        {
+            blackFadeOverlay.gameObject.SetActive(true);
+            Color c = blackFadeOverlay.color;
+            c.a = 1f;
+            blackFadeOverlay.color = c;
+            StartCoroutine(FadeOutEntryBlackScreen());
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (CurrentState == HubState.ShelfView)
+            {
+                ExitShelfView();
+            }
+            else if (CurrentState == HubState.BookView)
+            {
+                ReturnToShelf();
+            }
+        }
     }
 
     private void LateUpdate()
     {
-        // Mientras exploramos la biblioteca, la cámara sigue suavemente al jugador 3D
-        if (CurrentState == HubState.Exploring && !isTransitioning && playerController != null)
+        // 1. Cámara moviéndose suavemente del Punto A al Punto B en el Menú Principal
+        if (CurrentState == HubState.MainMenu && !isTransitioning && menuCamPointA != null && menuCamPointB != null)
+        {
+            menuPanTimer += Time.deltaTime * menuPanSpeed;
+            float t = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(menuPanTimer, 1f));
+
+            mainCamTransform.position = Vector3.Lerp(menuCamPointA.position, menuCamPointB.position, t);
+            mainCamTransform.rotation = Quaternion.Slerp(menuCamPointA.rotation, menuCamPointB.rotation, t);
+        }
+        // 2. Cámara siguiendo al jugador 3D cuando ya pulsó Jugar
+        else if (CurrentState == HubState.Exploring && !isTransitioning && playerController != null)
         {
             Vector3 desiredPosition = playerController.transform.position + cameraFollowOffset;
             mainCamTransform.position = Vector3.Lerp(mainCamTransform.position, desiredPosition, Time.deltaTime * followSmoothSpeed);
@@ -78,16 +141,146 @@ public class LevelSelectManager : MonoBehaviour
         }
     }
 
-    // 1. Llamado al hacer clic en la estantería mientras caminas
+    private IEnumerator FadeOutEntryBlackScreen()
+    {
+        float elapsed = 0f;
+        Color c = blackFadeOverlay.color;
+
+        while (elapsed < entryFadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            c.a = Mathf.Lerp(1f, 0f, Mathf.Clamp01(elapsed / entryFadeDuration));
+            blackFadeOverlay.color = c;
+            yield return null;
+        }
+
+        c.a = 0f;
+        blackFadeOverlay.color = c;
+        blackFadeOverlay.gameObject.SetActive(false);
+    }
+
+    // --- BOTONES DEL MENÚ PRINCIPAL Y VOLVER ---
+
+    public void StartGameFromMenu()
+    {
+        if (CurrentState != HubState.MainMenu || isTransitioning) return;
+
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
+
+        StartCoroutine(TransitionMenuToExplore());
+    }
+
+    public void ReturnToMainMenu()
+    {
+        if (CurrentState != HubState.Exploring || isTransitioning) return;
+
+        if (returnToMenuButton != null) returnToMenuButton.SetActive(false);
+        if (playerController != null) playerController.CanMove = false;
+
+        StartCoroutine(TransitionExploreToMenu());
+    }
+
+    public void ToggleOptionsPanel(bool show)
+    {
+        if (optionsPanel != null) optionsPanel.SetActive(show);
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(!show);
+    }
+
+    public void SetMasterVolume(float volume)
+    {
+        AudioListener.volume = volume;
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Saliendo del juego...");
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
+
+    private IEnumerator TransitionMenuToExplore()
+    {
+        isTransitioning = true;
+        float t = 0f;
+        Vector3 startPos = mainCamTransform.position;
+        Quaternion startRot = mainCamTransform.rotation;
+
+        Vector3 targetPos = playerController != null
+            ? playerController.transform.position + cameraFollowOffset
+            : startPos;
+        Quaternion targetRot = Quaternion.Euler(cameraFollowRotation);
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * (transitionSpeed * 0.75f);
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            if (playerController != null)
+            {
+                targetPos = playerController.transform.position + cameraFollowOffset;
+            }
+
+            mainCamTransform.position = Vector3.Lerp(startPos, targetPos, smoothT);
+            mainCamTransform.rotation = Quaternion.Slerp(startRot, targetRot, smoothT);
+            yield return null;
+        }
+
+        CurrentState = HubState.Exploring;
+        isTransitioning = false;
+
+        if (playerController != null) playerController.CanMove = true;
+        if (returnToMenuButton != null) returnToMenuButton.SetActive(true);
+    }
+
+    private IEnumerator TransitionExploreToMenu()
+    {
+        isTransitioning = true;
+        float t = 0f;
+        Vector3 startPos = mainCamTransform.position;
+        Quaternion startRot = mainCamTransform.rotation;
+
+        // Calculamos el punto exacto del recorrido A-B para enganchar sin cortes al llegar
+        float panT = Mathf.SmoothStep(0f, 1f, Mathf.PingPong(menuPanTimer, 1f));
+        Vector3 targetPos = (menuCamPointA != null && menuCamPointB != null)
+            ? Vector3.Lerp(menuCamPointA.position, menuCamPointB.position, panT)
+            : startPos;
+        Quaternion targetRot = (menuCamPointA != null && menuCamPointB != null)
+            ? Quaternion.Slerp(menuCamPointA.rotation, menuCamPointB.rotation, panT)
+            : startRot;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * (transitionSpeed * 0.75f);
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            mainCamTransform.position = Vector3.Lerp(startPos, targetPos, smoothT);
+            mainCamTransform.rotation = Quaternion.Slerp(startRot, targetRot, smoothT);
+            yield return null;
+        }
+
+        mainCamTransform.position = targetPos;
+        mainCamTransform.rotation = targetRot;
+
+        CurrentState = HubState.MainMenu;
+        isTransitioning = false;
+
+        if (mainMenuPanel != null) mainMenuPanel.SetActive(true);
+    }
+
+    // --- NAVEGACIÓN ESTANTERÍA Y ATRIL ---
+
     public void EnterShelfView()
     {
         if (CurrentState != HubState.Exploring || isTransitioning) return;
 
+        if (returnToMenuButton != null) returnToMenuButton.SetActive(false);
         if (playerController != null) playerController.CanMove = false;
         StartCoroutine(TransitionExploreToShelf());
     }
 
-    // 2. Llamado al pulsar el botón "Salir de Estantería"
     public void ExitShelfView()
     {
         if (CurrentState != HubState.ShelfView || isTransitioning) return;
@@ -96,7 +289,6 @@ public class LevelSelectManager : MonoBehaviour
         StartCoroutine(TransitionShelfToExplore());
     }
 
-    // 3. Llamado al hacer clic en un libro de la estantería
     public void InspectBook(SelectableBook book)
     {
         if (CurrentState != HubState.ShelfView || isTransitioning) return;
@@ -113,7 +305,6 @@ public class LevelSelectManager : MonoBehaviour
         StartCoroutine(TransitionToLecternSequence());
     }
 
-    // 4. Llamado al pulsar el botón "<- Volver a Estantería" desde el atril
     public void ReturnToShelf()
     {
         if (CurrentState != HubState.BookView || isTransitioning) return;
@@ -170,6 +361,7 @@ public class LevelSelectManager : MonoBehaviour
         isTransitioning = false;
 
         if (playerController != null) playerController.CanMove = true;
+        if (returnToMenuButton != null) returnToMenuButton.SetActive(true);
     }
 
     private IEnumerator TransitionToLecternSequence()
