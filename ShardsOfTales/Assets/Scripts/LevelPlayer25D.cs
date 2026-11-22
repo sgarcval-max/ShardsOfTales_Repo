@@ -22,8 +22,12 @@ public class LevelPlayer25D : MonoBehaviour
 
     private void Update()
     {
-        // Si hay un diálogo abierto, quieto para no saltar al pasar texto
-        if (SimpleDialogueUI.Instance != null && SimpleDialogueUI.Instance.IsOpen)
+        bool dialogueOpen = SimpleDialogueUI.Instance != null && SimpleDialogueUI.Instance.IsOpen;
+        bool ocarinaOpen = OcarinaMinigameUI.Instance != null && OcarinaMinigameUI.Instance.IsOpen;
+        bool riverPlaying = RiverCrossyMinigame.Instance != null && RiverCrossyMinigame.Instance.IsPlaying;
+        bool rocksOpen = CaveRocksMinigameUI.Instance != null && CaveRocksMinigameUI.Instance.IsOpen;
+
+        if (dialogueOpen || ocarinaOpen || riverPlaying || rocksOpen)
         {
             moveInput = 0f;
             return;
@@ -32,7 +36,7 @@ public class LevelPlayer25D : MonoBehaviour
         // 1. Movimiento lateral (A / D)
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // 2. Comprobar suelo (ignora la capa del propio jugador)
+        // 2. Comprobar suelo
         if (groundCheck != null)
         {
             int mask = ~LayerMask.GetMask("Player");
@@ -45,7 +49,7 @@ public class LevelPlayer25D : MonoBehaviour
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
         }
 
-        // 4. Interactuar con tecla E (cercanía) o Clic Izquierdo (ratón)
+        // 4. Interactuar con tecla E o Clic Izquierdo
         if (Input.GetKeyDown(KeyCode.E))
         {
             InteractNearby();
@@ -65,6 +69,7 @@ public class LevelPlayer25D : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (RiverCrossyMinigame.Instance != null && RiverCrossyMinigame.Instance.IsPlaying) return;
         rb.linearVelocity = new Vector3(moveInput * moveSpeed, rb.linearVelocity.y, 0f);
     }
 
