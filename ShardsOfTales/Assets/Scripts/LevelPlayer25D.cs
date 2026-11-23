@@ -26,8 +26,9 @@ public class LevelPlayer25D : MonoBehaviour
         bool ocarinaOpen = OcarinaMinigameUI.Instance != null && OcarinaMinigameUI.Instance.IsOpen;
         bool riverPlaying = RiverCrossyMinigame.Instance != null && RiverCrossyMinigame.Instance.IsPlaying;
         bool rocksOpen = CaveRocksMinigameUI.Instance != null && CaveRocksMinigameUI.Instance.IsOpen;
+        bool fnfOpen = FNFBossMinigameUI.Instance != null && FNFBossMinigameUI.Instance.IsPlaying;
 
-        if (dialogueOpen || ocarinaOpen || riverPlaying || rocksOpen)
+        if (dialogueOpen || ocarinaOpen || riverPlaying || rocksOpen || fnfOpen)
         {
             moveInput = 0f;
             return;

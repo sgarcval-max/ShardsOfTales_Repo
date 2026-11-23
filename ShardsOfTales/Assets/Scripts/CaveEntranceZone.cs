@@ -2,9 +2,15 @@ using UnityEngine;
 
 public class CaveEntranceZone : MonoBehaviour, IInteractable
 {
+    [Header("Interior de la Cueva")]
+    public Transform caveInteriorSpawn;
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) Interact();
+        if (other.CompareTag("Player"))
+        {
+            Interact();
+        }
     }
 
     public void Interact()
@@ -13,10 +19,20 @@ public class CaveEntranceZone : MonoBehaviour, IInteractable
 
         if (PiperQuestManager.Instance.CurrentStep == PiperQuestManager.Step.EnterCave)
         {
-            SimpleDialogueUI.Instance.ShowDialogue("Entrada de la Cueva", new string[]
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null && caveInteriorSpawn != null)
             {
-                "¡Has completado el Puzzle 2 y encontrado el escondite del Flautista!",
-                "(En la Fase 4 empezará aquí la batalla musical final estilo Friday Night Funkin')."
+                Rigidbody rb = playerObj.GetComponent<Rigidbody>();
+                if (rb != null) rb.linearVelocity = Vector3.zero;
+                playerObj.transform.position = caveInteriorSpawn.position;
+            }
+
+            PiperQuestManager.Instance.CurrentStep = PiperQuestManager.Step.InsideCave;
+
+            SimpleDialogueUI.Instance.ShowDialogue("Interior de la Cueva", new string[]
+            {
+                "Has entrado en lo profundo de la montaña.",
+                "¡Mira al fondo! El Flautista tiene hipnotizados a los niños del pueblo. Acércate a hablar con él."
             });
         }
     }

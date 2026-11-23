@@ -12,7 +12,6 @@ public class PiperQuestManager : MonoBehaviour
         PlayOcarina,
         HerdRatsToForest,
         ReturnToPiper,
-        // --- PUZZLE 2: BUSCA A LOS NIÑOS ---
         TalkToFather,
         FindDeafChild,
         FindPencil,
@@ -22,7 +21,11 @@ public class PiperQuestManager : MonoBehaviour
         CheckFootprints,
         FindCrippledKids,
         ClearCaveRocks,
-        EnterCave
+        EnterCave,
+        // --- PUZZLE 3: PELEA FINAL ---
+        InsideCave,
+        BossBattleFNF,
+        LevelCompleted
     }
 
     public Step CurrentStep { get; set; } = Step.TalkToPiper;
@@ -35,6 +38,10 @@ public class PiperQuestManager : MonoBehaviour
     [Header("Objetos de Transición (Puzzle 1 -> Puzzle 2)")]
     public GameObject fatherNPC;
     public GameObject townGate;
+
+    [Header("Objetos Finales de la Cueva (Puzzle 3)")]
+    public GameObject bossPiperObject;
+    public GameObject kidnappedChildrenGroup;
 
     private void Awake()
     {
