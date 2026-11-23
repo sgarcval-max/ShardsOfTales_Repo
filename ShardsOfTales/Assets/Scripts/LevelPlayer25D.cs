@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class LevelPlayer25D : MonoBehaviour
 {
+    [Header("Visual 2D")]
+    public SpriteRenderer spriteRenderer;
+
     [Header("Movimiento y Salto")]
     public float moveSpeed = 7f;
     public float jumpForce = 11f;
@@ -18,6 +21,7 @@ public class LevelPlayer25D : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Update()
@@ -34,8 +38,14 @@ public class LevelPlayer25D : MonoBehaviour
             return;
         }
 
-        // 1. Movimiento lateral (A / D)
+        // 1. Movimiento lateral (A / D) y giro del Sprite 2D
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (spriteRenderer != null)
+        {
+            if (moveInput > 0.05f) spriteRenderer.flipX = false;
+            else if (moveInput < -0.05f) spriteRenderer.flipX = true;
+        }
 
         // 2. Comprobar suelo
         if (groundCheck != null)
