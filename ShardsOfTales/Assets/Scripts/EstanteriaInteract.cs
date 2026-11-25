@@ -2,16 +2,14 @@ using UnityEngine;
 
 public class EstanteriaInteract : MonoBehaviour
 {
-    public GameObject panelLibros;
-    public PlayerHubMovement playerMovement;
+    public CamaraHub camara;
+    public GameObject avisoInteractuar;
 
     private bool playerCerca;
-    private bool menuAbierto;
 
     void Start()
     {
-        if (panelLibros != null)
-            panelLibros.SetActive(false);
+        avisoInteractuar.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
@@ -28,27 +26,13 @@ public class EstanteriaInteract : MonoBehaviour
 
     void Update()
     {
-        if (!menuAbierto && playerCerca && Input.GetKeyDown(KeyCode.E))
-        {
-            AbrirMenu();
-        }
-        else if (menuAbierto && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Escape)))
-        {
-            CerrarMenu();
-        }
-    }
+        bool puede = playerCerca && camara.PuedeEntrarEstanteria();
+        avisoInteractuar.SetActive(puede);
 
-    public void AbrirMenu()
-    {
-        menuAbierto = true;
-        panelLibros.SetActive(true);
-        playerMovement.enabled = false;
-    }
-
-    public void CerrarMenu()
-    {
-        menuAbierto = false;
-        panelLibros.SetActive(false);
-        playerMovement.enabled = true;
+        if (puede && Input.GetKeyDown(KeyCode.E))
+        {
+            avisoInteractuar.SetActive(false);
+            camara.EntrarEstanteria();
+        }
     }
 }
