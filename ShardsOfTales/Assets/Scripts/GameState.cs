@@ -9,4 +9,6 @@ public static class GameState
     public static bool ninoSordoAyudado = false;
     public static bool ninaCiegaAyudada = false;
     public static bool ninoCojoAyudado = false;
+    public static bool flautistaCompletado = false;
+    public static bool finalFlautistaBueno = false;
 }

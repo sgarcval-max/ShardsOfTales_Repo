@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Nivel 1/SCN_Tronco_00.unity
     guid: 2cbbb85a7658b834a805d76849256da7
+  - enabled: 1
+    path: Assets/Scenes/Nivel 1/SCN_Cueva_00.unity
+    guid: fbfd749a429591444b04c5e1c20c9bd9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -2058,7 +2058,7 @@ MonoBehaviour:
   duracionCruce: 15
   tiempoParaCaer: 2
   inclinacionMax: 30
-  escenaSiguiente: SCN_Bosque_00
+  escenaSiguiente: SCN_Cueva_00
   colorBien: {r: 0.3, g: 1, b: 0.3, a: 1}
   colorMal: {r: 1, g: 0.25, b: 0.25, a: 1}
 --- !u!4 &1891487075
