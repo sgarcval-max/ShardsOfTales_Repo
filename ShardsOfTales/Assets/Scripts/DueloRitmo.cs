@@ -41,6 +41,8 @@ public class DueloRitmo : MonoBehaviour
         public bool resuelta;
     }
 
+    private static bool esReintento;
+
     private List<Nota> notas = new List<Nota>();
     private int siguienteSpawn;
     private float tiempoCancion;
@@ -74,8 +76,16 @@ public class DueloRitmo : MonoBehaviour
 
     IEnumerator Secuencia()
     {
-        Mostrar("El flautista te reta a un duelo musical.\nPulsa A S W D (o las flechas) al ritmo.");
-        yield return new WaitForSeconds(3.5f);
+        if (esReintento)
+        {
+            Mostrar("¡Otra vez!");
+            yield return new WaitForSeconds(1.5f);
+        }
+        else
+        {
+            Mostrar("El flautista te reta a un duelo musical.\nPulsa A S W D (o las flechas) al ritmo.");
+            yield return new WaitForSeconds(3.5f);
+        }
 
         for (int i = 3; i >= 1; i--)
         {
@@ -234,15 +244,23 @@ public class DueloRitmo : MonoBehaviour
         foreach (Nota n in notas)
             if (n.rt != null) Destroy(n.rt.gameObject);
 
-        GameState.flautistaCompletado = true;
-        GameState.finalFlautistaBueno = bueno;
-
         if (bueno)
-            Mostrar("¡Has ganado el duelo!\nLos niños vuelven a sus casas, felices.");
-        else
-            Mostrar("El flautista desaparece con los niños...\n(Final original)");
+        {
+            esReintento = false;
+            GameState.flautistaCompletado = true;
+            GameState.finalFlautistaBueno = true;
 
-        yield return new WaitForSeconds(5f);
-        SceneManager.LoadScene(escenaFinal);
+            Mostrar("¡Has ganado el duelo!\nLos niños vuelven a sus casas, felices.");
+            yield return new WaitForSeconds(5f);
+            SceneManager.LoadScene(escenaFinal);
+        }
+        else
+        {
+            esReintento = true;
+
+            Mostrar("El flautista se ríe de ti...\n¡Inténtalo otra vez!");
+            yield return new WaitForSeconds(3f);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 }
