@@ -8,4 +8,5 @@ public static class GameState
     public static bool tieneBoligrafo = false;
     public static bool ninoSordoAyudado = false;
     public static bool ninaCiegaAyudada = false;
+    public static bool ninoCojoAyudado = false;
 }

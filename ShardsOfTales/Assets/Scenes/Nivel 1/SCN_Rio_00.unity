@@ -1158,7 +1158,7 @@ MonoBehaviour:
   zMeta: 11
   limiteX: 6
   radioPiedra: 0.8
-  escenaSiguiente: SCN_Bosque_00
+  escenaSiguiente: SCN_Tronco_00
   forzarFlautaParaPruebas: 1
 --- !u!1 &1129324538
 GameObject:
