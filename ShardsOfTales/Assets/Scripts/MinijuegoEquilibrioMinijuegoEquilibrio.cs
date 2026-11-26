@@ -122,6 +122,6 @@ public class MinijuegoEquilibrio : MonoBehaviour
         textoMensaje.text = "¡El niño ha cruzado el tronco! La cueva está justo delante.";
         textoMensaje.gameObject.SetActive(true);
         yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene(escenaSiguiente);
+        TransicionPagina.IrA(escenaSiguiente, true);
     }
 }

@@ -1184,6 +1184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SalidaEscena
   textoMensaje: {fileID: 1146688982}
   escenaDestino: SCN_Pueblo_00
+  adelante: 0
   condicion: 0
   mensajeAviso: Pulsa E para volver al pueblo
   mensajeBloqueado: "No puedes salir todav\xEDa"
@@ -2077,6 +2078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SalidaEscena
   textoMensaje: {fileID: 1146688982}
   escenaDestino: SCN_Rio_00
+  adelante: 1
   condicion: 2
   mensajeAviso: "Pulsa E para ir al r\xEDo"
   mensajeBloqueado: "Antes debes ayudar al ni\xF1o sordo"

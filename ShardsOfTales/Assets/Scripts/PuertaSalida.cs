@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 
@@ -41,7 +40,8 @@ public class PuertaSalida : MonoBehaviour
         {
             if (GameState.tienePartitura)
             {
-                SceneManager.LoadScene(escenaDestino);
+                textoMensaje.gameObject.SetActive(false);
+                TransicionPagina.IrA(escenaDestino, true);
             }
             else
             {

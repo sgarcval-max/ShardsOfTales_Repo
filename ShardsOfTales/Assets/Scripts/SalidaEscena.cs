@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 
@@ -14,6 +13,7 @@ public class SalidaEscena : MonoBehaviour
 {
     public TMP_Text textoMensaje;
     public string escenaDestino;
+    public bool adelante = true;
     public CondicionSalida condicion = CondicionSalida.Ninguna;
     public string mensajeAviso = "Pulsa E para salir";
     public string mensajeBloqueado = "No puedes salir todavía";
@@ -51,7 +51,8 @@ public class SalidaEscena : MonoBehaviour
 
         if (CondicionCumplida())
         {
-            SceneManager.LoadScene(escenaDestino);
+            textoMensaje.gameObject.SetActive(false);
+            TransicionPagina.IrA(escenaDestino, adelante);
         }
         else
         {

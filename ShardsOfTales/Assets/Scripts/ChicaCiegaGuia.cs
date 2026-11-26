@@ -108,7 +108,7 @@ public class ChicaCiegaGuia : MonoBehaviour
         textoMensaje.text = "¡La niña ha cruzado el río sana y salva!";
         textoMensaje.gameObject.SetActive(true);
         yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene(escenaSiguiente);
+        TransicionPagina.IrA(escenaSiguiente, true);
     }
 
     IEnumerator MostrarNota(string nombre)

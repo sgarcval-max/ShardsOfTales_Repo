@@ -8,15 +8,25 @@ public class RatonesManager : MonoBehaviour
 {
     public static event Action OnMelodiaCorrecta;
 
+    public Transform player;
     public TMP_Text textoContador;
     public TMP_Text textoMensaje;
     public int totalRatones = 5;
     public int[] melodia = { 1, 3, 5 };
     public bool forzarFlautaParaPruebas = true;
+    public float esperaDesaparecer = 2f;
 
     private int capturados;
     private List<int> ultimasNotas = new List<int>();
+    private List<RatonHuidizo> seguidores = new List<RatonHuidizo>();
     private Coroutine rutina;
+    private float dirJugador = 1f;
+    private float ultimaX;
+
+    public float DireccionJugador
+    {
+        get { return dirJugador; }
+    }
 
     void Awake()
     {
@@ -26,6 +36,7 @@ public class RatonesManager : MonoBehaviour
     void Start()
     {
         textoMensaje.gameObject.SetActive(false);
+        ultimaX = player.position.x;
 
         if (GameState.ratonesCompletados)
             capturados = totalRatones;
@@ -41,6 +52,14 @@ public class RatonesManager : MonoBehaviour
     void OnDisable()
     {
         FlautaPlayer.OnNotaTocada -= NotaTocada;
+    }
+
+    void Update()
+    {
+        float dx = player.position.x - ultimaX;
+        if (Mathf.Abs(dx) > 0.001f)
+            dirJugador = Mathf.Sign(dx);
+        ultimaX = player.position.x;
     }
 
     void NotaTocada(int nota)
@@ -59,8 +78,10 @@ public class RatonesManager : MonoBehaviour
         MostrarTemporal("¡Melodía correcta!");
     }
 
-    public void RatonCapturado()
+    public int RatonCapturado(RatonHuidizo raton)
     {
+        int indice = seguidores.Count;
+        seguidores.Add(raton);
         capturados++;
         ActualizarContador();
 
@@ -70,7 +91,20 @@ public class RatonesManager : MonoBehaviour
             if (rutina != null) StopCoroutine(rutina);
             textoMensaje.text = "¡Has capturado a todos los ratones!";
             textoMensaje.gameObject.SetActive(true);
-            Debug.Log("Todos los ratones capturados");
+            StartCoroutine(DesaparecenTodos());
+        }
+
+        return indice;
+    }
+
+    IEnumerator DesaparecenTodos()
+    {
+        yield return new WaitForSeconds(esperaDesaparecer);
+
+        foreach (RatonHuidizo r in seguidores)
+        {
+            r.Desaparecer();
+            yield return new WaitForSeconds(0.15f);
         }
     }
 

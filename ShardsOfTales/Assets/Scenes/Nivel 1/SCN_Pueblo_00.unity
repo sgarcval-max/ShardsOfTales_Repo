@@ -260,11 +260,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e345458c788622d489330e00c922e9b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RatonesManager
+  player: {fileID: 2011721047}
   textoContador: {fileID: 764401399}
   textoMensaje: {fileID: 1766451287}
   totalRatones: 5
   melodia: 010000000300000005000000
   forzarFlautaParaPruebas: 1
+  esperaDesaparecer: 2
 --- !u!4 &25132131
 Transform:
   m_ObjectHideFlags: 0
@@ -1119,6 +1121,11 @@ MonoBehaviour:
   duracionQuieto: 8
   limiteIzq: -19
   limiteDer: 19
+  separacionSeguir: 1.1
+  velocidadSeguir: 6
+  alturaSuelo: 0.2
+  alturaSalto: 0.2
+  frecuenciaSalto: 14
   colorNormal: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorQuieto: {r: 0.4, g: 0.7, b: 1, a: 1}
 --- !u!212 &654538224
@@ -1235,6 +1242,11 @@ MonoBehaviour:
   duracionQuieto: 8
   limiteIzq: -19
   limiteDer: 19
+  separacionSeguir: 1.1
+  velocidadSeguir: 6
+  alturaSuelo: 0.2
+  alturaSalto: 0.2
+  frecuenciaSalto: 14
   colorNormal: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorQuieto: {r: 0.4, g: 0.7, b: 1, a: 1}
 --- !u!212 &714894229
@@ -1763,6 +1775,11 @@ MonoBehaviour:
   duracionQuieto: 8
   limiteIzq: -19
   limiteDer: 19
+  separacionSeguir: 1.1
+  velocidadSeguir: 6
+  alturaSuelo: 0.2
+  alturaSalto: 0.2
+  frecuenciaSalto: 14
   colorNormal: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorQuieto: {r: 0.4, g: 0.7, b: 1, a: 1}
 --- !u!212 &1118515750
@@ -2818,6 +2835,11 @@ MonoBehaviour:
   duracionQuieto: 8
   limiteIzq: -19
   limiteDer: 19
+  separacionSeguir: 1.1
+  velocidadSeguir: 6
+  alturaSuelo: 0.2
+  alturaSalto: 0.2
+  frecuenciaSalto: 14
   colorNormal: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorQuieto: {r: 0.4, g: 0.7, b: 1, a: 1}
 --- !u!1 &1903772225
@@ -3109,6 +3131,11 @@ MonoBehaviour:
   duracionQuieto: 8
   limiteIzq: -19
   limiteDer: 19
+  separacionSeguir: 1.1
+  velocidadSeguir: 6
+  alturaSuelo: 0.2
+  alturaSalto: 0.2
+  frecuenciaSalto: 14
   colorNormal: {r: 0.55, g: 0.55, b: 0.55, a: 1}
   colorQuieto: {r: 0.4, g: 0.7, b: 1, a: 1}
 --- !u!212 &1947306237
