@@ -368,6 +368,89 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 150}
   m_SizeDelta: {x: 600, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &128967693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 128967694}
+  - component: {fileID: 128967695}
+  - component: {fileID: 128967696}
+  m_Layer: 0
+  m_Name: Bestia
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &128967694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128967693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1599074730}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &128967695
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128967693}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 3, z: 4}
+  m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!114 &128967696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128967693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69f163ab26a2f8429fd702214ab28a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCConversacion
+  panelDialogo: {fileID: 1136992383}
+  textoDialogo: {fileID: 535606691}
+  avisoInteractuar: {fileID: 1594255741}
+  player: {fileID: 1124103491}
+  alTerminar: 2
+  alAcabarConversacion:
+    m_PersistentCalls:
+      m_Calls: []
+  lineas:
+  - "Grrr... Ah, eres t\xFA. Gracias por ayudar a Lumiere y a la se\xF1ora Potts."
+  - 'Esta noche hay un baile y estoy muy preocupado: temo que la rosa empeore.'
+  - "Por favor, ve a la sala de la rosa y vig\xEDlala para que no se marchite."
+  - "Cuando termines, podr\xE1s afrontar el \xFAltimo desaf\xEDo. \xA1El orden no
+    importa!"
+  lineasDespues:
+  - "Vigila la rosa, por favor. \xA1No dejes que se marchite!"
 --- !u!1 &239272896
 GameObject:
   m_ObjectHideFlags: 0
@@ -501,6 +584,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 239272896}
   m_CullTransparentMesh: 1
+--- !u!1 &255564471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 255564473}
+  - component: {fileID: 255564472}
+  m_Layer: 0
+  m_Name: CastilloManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &255564472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255564471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fff6f57e50f80345b483b9c2f143aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CastilloManager
+  player: {fileID: 1124103493}
+  bestia: {fileID: 128967693}
+  textoMensaje: {fileID: 1953148300}
+  posicionesX:
+  - -17
+  - -7
+  - 1
+  - 13
+  offsetCamara: {x: 0, y: 3, z: -12}
+  forzarMinijuegosParaPruebas: 0
+--- !u!4 &255564473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255564471}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.42606, y: 0, z: 1.10725}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &515593098
 GameObject:
   m_ObjectHideFlags: 0
@@ -1863,6 +2000,7 @@ MonoBehaviour:
   textoMensaje: {fileID: 1953148300}
   escenaDestino: SCN_Comedor_00
   adelante: 1
+  spawnDestino: 0
   condicion: 3
   mensajeAviso: Pulsa E para entrar al comedor
   mensajeBloqueado: Antes habla con Din Don
@@ -2003,6 +2141,97 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1594255741}
   m_CullTransparentMesh: 1
+--- !u!1 &1599074729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599074730}
+  - component: {fileID: 1599074731}
+  m_Layer: 0
+  m_Name: SPR_Bestia
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1599074730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599074729}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1, z: 0.5}
+  m_LocalScale: {x: 1.4, y: 2.2, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 128967694}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &1599074731
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599074729}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
 --- !u!1 &1650643824
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,6 +2481,7 @@ MonoBehaviour:
   textoMensaje: {fileID: 1953148300}
   escenaDestino: SCN_Cocina_00
   adelante: 1
+  spawnDestino: 0
   condicion: 3
   mensajeAviso: Pulsa E para entrar a la cocina
   mensajeBloqueado: Antes habla con Din Don
@@ -2517,6 +2747,7 @@ MonoBehaviour:
   textoMensaje: {fileID: 1953148300}
   escenaDestino: 
   adelante: 1
+  spawnDestino: 0
   condicion: 4
   mensajeAviso: Pulsa E para entrar a la sala de la rosa
   mensajeBloqueado: "A\xFAn no puedes entrar. Habla primero con la Bestia."
@@ -2952,6 +3183,7 @@ SceneRoots:
   - {fileID: 1792628678}
   - {fileID: 1124103493}
   - {fileID: 1795973679}
+  - {fileID: 128967694}
   - {fileID: 2053049271}
   - {fileID: 1156073755}
   - {fileID: 528075546}
@@ -2959,5 +3191,6 @@ SceneRoots:
   - {fileID: 1393694815}
   - {fileID: 1908583366}
   - {fileID: 1770336716}
+  - {fileID: 255564473}
   - {fileID: 1256990057}
   - {fileID: 1710375074}

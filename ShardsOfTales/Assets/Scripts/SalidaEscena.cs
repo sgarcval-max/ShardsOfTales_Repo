@@ -16,6 +16,7 @@ public class SalidaEscena : MonoBehaviour
     public TMP_Text textoMensaje;
     public string escenaDestino;
     public bool adelante = true;
+    public int spawnDestino = 0;
     public CondicionSalida condicion = CondicionSalida.Ninguna;
     public string mensajeAviso = "Pulsa E para salir";
     public string mensajeBloqueado = "No puedes salir todavía";
@@ -62,6 +63,7 @@ public class SalidaEscena : MonoBehaviour
         else
         {
             textoMensaje.gameObject.SetActive(false);
+            GameState.spawnCastillo = spawnDestino;
             TransicionPagina.IrA(escenaDestino, adelante);
         }
     }

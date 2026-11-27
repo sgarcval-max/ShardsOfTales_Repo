@@ -1866,6 +1866,7 @@ MonoBehaviour:
   textoMensaje: {fileID: 850614529}
   escenaDestino: SCN_Castillo_00
   adelante: 0
+  spawnDestino: 2
   condicion: 0
   mensajeAviso: Pulsa E para volver al castillo
   mensajeBloqueado: "No puedes salir todav\xEDa"
