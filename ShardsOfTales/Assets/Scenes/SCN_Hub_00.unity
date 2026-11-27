@@ -3794,7 +3794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LibroEstanteria
   nombreNivel: La Bella y la Bestia
-  escenaNivel: SCN_BellaBestia_00
+  escenaNivel: SCN_Castillo_00
   color: {r: 0.9019608, g: 0.19607843, b: 0.3137255, a: 1}
   colorPaginas: {r: 0.96, g: 0.92, b: 0.8, a: 1}
   direccionSalida: {x: 0, y: 0, z: -1}

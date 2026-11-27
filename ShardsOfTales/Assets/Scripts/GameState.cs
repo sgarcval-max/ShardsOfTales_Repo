@@ -11,4 +11,11 @@ public static class GameState
     public static bool ninoCojoAyudado = false;
     public static bool flautistaCompletado = false;
     public static bool finalFlautistaBueno = false;
+
+    // La Bella y la Bestia
+    public static bool dinDonHablado = false;
+    public static bool velasCompletadas = false;
+    public static bool cocinaCompletada = false;
+    public static bool bestiaHablada = false;
+    public static bool rosaSalvada = false;
 }

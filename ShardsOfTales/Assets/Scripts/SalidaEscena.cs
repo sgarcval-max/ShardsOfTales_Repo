@@ -6,7 +6,9 @@ public enum CondicionSalida
 {
     Ninguna,
     RatonesCapturados,
-    NinoSordoAyudado
+    NinoSordoAyudado,
+    DinDonHablado,
+    BestiaHablada
 }
 
 public class SalidaEscena : MonoBehaviour
@@ -49,32 +51,44 @@ public class SalidaEscena : MonoBehaviour
     {
         if (!cerca || !Input.GetKeyDown(KeyCode.E)) return;
 
-        if (CondicionCumplida())
+        if (!CondicionCumplida())
         {
-            textoMensaje.gameObject.SetActive(false);
-            TransicionPagina.IrA(escenaDestino, adelante);
+            MostrarTemporal(mensajeBloqueado);
+        }
+        else if (string.IsNullOrEmpty(escenaDestino))
+        {
+            MostrarTemporal("Esta sala aún no está construida.");
         }
         else
         {
-            Mostrar(mensajeBloqueado);
-            if (rutina != null) StopCoroutine(rutina);
-            rutina = StartCoroutine(Ocultar());
+            textoMensaje.gameObject.SetActive(false);
+            TransicionPagina.IrA(escenaDestino, adelante);
         }
     }
 
     bool CondicionCumplida()
     {
-        if (condicion == CondicionSalida.RatonesCapturados)
-            return GameState.ratonesCompletados;
-        if (condicion == CondicionSalida.NinoSordoAyudado)
-            return GameState.ninoSordoAyudado;
-        return true;
+        switch (condicion)
+        {
+            case CondicionSalida.RatonesCapturados: return GameState.ratonesCompletados;
+            case CondicionSalida.NinoSordoAyudado: return GameState.ninoSordoAyudado;
+            case CondicionSalida.DinDonHablado: return GameState.dinDonHablado;
+            case CondicionSalida.BestiaHablada: return GameState.bestiaHablada;
+            default: return true;
+        }
     }
 
     void Mostrar(string texto)
     {
         textoMensaje.text = texto;
         textoMensaje.gameObject.SetActive(true);
+    }
+
+    void MostrarTemporal(string texto)
+    {
+        Mostrar(texto);
+        if (rutina != null) StopCoroutine(rutina);
+        rutina = StartCoroutine(Ocultar());
     }
 
     IEnumerator Ocultar()
