@@ -14,7 +14,7 @@ public class NPCConversacion : MonoBehaviour
     public GameObject panelDialogo;
     public TMP_Text textoDialogo;
     public GameObject avisoInteractuar;
-    public PlayerPlatformer2D player;
+    public MonoBehaviour player;
 
     public AccionFinalConversacion alTerminar = AccionFinalConversacion.Ninguna;
     public UnityEvent alAcabarConversacion;

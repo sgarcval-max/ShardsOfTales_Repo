@@ -2250,7 +2250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SalidaEscena
   textoMensaje: {fileID: 1953148300}
-  escenaDestino: 
+  escenaDestino: SCN_Cocina_00
   adelante: 1
   condicion: 3
   mensajeAviso: Pulsa E para entrar a la cocina
