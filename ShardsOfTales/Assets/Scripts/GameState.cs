@@ -18,6 +18,8 @@ public static class GameState
     public static bool cocinaCompletada = false;
     public static bool bestiaHablada = false;
     public static bool rosaSalvada = false;
+    public static bool bellaBestiaCompletado = false;
+    public static bool finalBellaBestiaBueno = false;
 
     // Dónde aparece el jugador al volver al castillo:
     // 0 = inicio, 1 = puerta del comedor, 2 = puerta de la cocina, 3 = puerta de la rosa

@@ -2745,7 +2745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SalidaEscena
   textoMensaje: {fileID: 1953148300}
-  escenaDestino: 
+  escenaDestino: SCN_SalaRosa_00
   adelante: 1
   spawnDestino: 0
   condicion: 4
